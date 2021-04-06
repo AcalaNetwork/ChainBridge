@@ -89,7 +89,7 @@ var (
 	}
 	SubkeyNetworkFlag = &cli.StringFlag{
 		Name:        "network",
-		Usage:       "Specify the network to use for the address encoding (substrate/polkadot/centrifuge)",
+		Usage:       "Specify the network to use for the address encoding (substrate/polkadot/centrifuge/acala/karura)",
 		DefaultText: "substrate",
 	}
 )

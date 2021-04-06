@@ -8,7 +8,7 @@ require (
 	github.com/ChainSafe/log15 v1.0.0
 	github.com/aristanetworks/goarista v0.0.0-20200609010056-95bcf8053598 // indirect
 	github.com/centrifuge/go-substrate-rpc-client v2.0.0+incompatible
-	github.com/deckarep/golang-set v1.7.1 // indirect
+	github.com/centrifuge/go-substrate-rpc-client/v2 v2.1.0
 	github.com/ethereum/go-ethereum v1.9.25
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/prometheus/client_golang v1.4.1
