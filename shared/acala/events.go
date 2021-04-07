@@ -9,6 +9,53 @@ import (
 	substrate_utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 )
 
+type Nmsl struct {
+	IsHzy 	bool
+	IsYxy 	bool
+}
+
+func (m *Nmsl) Decode(decoder scale.Decoder) error {
+	b, err := decoder.ReadOneByte()
+	if err != nil {
+		return err
+	}
+
+	if b == 0 {
+		m.IsHzy = true
+	} else if b == 1 {
+		m.IsYxy = true
+	}
+
+	return nil
+}
+
+type Hello struct {
+	IsNothing bool
+	IsNumber bool
+	AsNumber types.U32
+}
+
+func (p *Hello) Decode(decoder scale.Decoder) error {
+	b, err := decoder.ReadOneByte()
+	if err != nil {
+		return err
+	}
+
+	switch b {
+	case 0:
+		p.IsNothing = true
+	case 1:
+		p.IsNumber = true
+		err = decoder.Decode(&p.AsNumber)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type TokenSymbol = uint8
 
 type CurrencyId struct {
@@ -82,8 +129,43 @@ type EventCurrenciesTransferred struct {
 	Topics          []types.Hash
 }
 
+type EventCdpEngineGlobalStabilityFeeUpdated struct {
+	Phase           types.Phase
+	Rate      		types.U128
+	Topics          []types.Hash
+}
+
+type EventCdpTreasuryCollateralAuctionMaximumSizeUpdated struct {
+	Phase           types.Phase
+	Currency      	CurrencyId
+	Topics          []types.Hash
+}
+
+type EventCdpTreasuryTest1 struct {
+	Phase           types.Phase
+	Symbol      	uint8
+	Topics          []types.Hash
+}
+
+type EventCdpTreasuryTest2 struct {
+	Phase           types.Phase
+	Who      		Nmsl
+	Topics          []types.Hash
+}
+
+type EventCdpTreasuryTest3 struct {
+	Phase           types.Phase
+	NewHello      	Hello
+	Topics          []types.Hash
+}
+
 type Events struct {
 	substrate_utils.Events
 	Currencies_Transferred								[]EventCurrenciesTransferred	//nolint:stylecheck,golint
 	AcalaTreasury_Deposit								[]types.EventTreasuryDeposit	//nolint:stylecheck,golint
+	CdpEngine_GlobalStabilityFeeUpdated					[]EventCdpEngineGlobalStabilityFeeUpdated	//nolint:stylecheck,golint
+	CdpTreasury_CollateralAuctionMaximumSizeUpdated		[]EventCdpTreasuryCollateralAuctionMaximumSizeUpdated	//nolint:stylecheck,golint
+	CdpTreasury_Test1 []EventCdpTreasuryTest1	//nolint:stylecheck,golint
+	CdpTreasury_Test2 []EventCdpTreasuryTest2	//nolint:stylecheck,golint
+	CdpTreasury_Test3 []EventCdpTreasuryTest3	//nolint:stylecheck,golint
 }
