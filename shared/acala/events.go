@@ -9,33 +9,17 @@ import (
 	substrate_utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 )
 
-type Nmsl struct {
-	IsHzy 	bool
-	IsYxy 	bool
+type TokenSymbol = uint8
+type EvmAddress = [20]byte
+
+type DEXShare struct {
+	IsToken bool
+	AsToken TokenSymbol
+	IsERC20 bool
+	AsERC20 EvmAddress
 }
 
-func (m *Nmsl) Decode(decoder scale.Decoder) error {
-	b, err := decoder.ReadOneByte()
-	if err != nil {
-		return err
-	}
-
-	if b == 0 {
-		m.IsHzy = true
-	} else if b == 1 {
-		m.IsYxy = true
-	}
-
-	return nil
-}
-
-type Hello struct {
-	IsNothing bool
-	IsNumber bool
-	AsNumber types.U32
-}
-
-func (p *Hello) Decode(decoder scale.Decoder) error {
+func (p *DEXShare) Decode(decoder scale.Decoder) error {
 	b, err := decoder.ReadOneByte()
 	if err != nil {
 		return err
@@ -43,10 +27,11 @@ func (p *Hello) Decode(decoder scale.Decoder) error {
 
 	switch b {
 	case 0:
-		p.IsNothing = true
+		p.IsToken = true
+		err = decoder.Decode(&p.AsToken)
 	case 1:
-		p.IsNumber = true
-		err = decoder.Decode(&p.AsNumber)
+		p.IsERC20 = true
+		err = decoder.Decode(&p.AsERC20)
 	}
 
 	if err != nil {
@@ -56,18 +41,40 @@ func (p *Hello) Decode(decoder scale.Decoder) error {
 	return nil
 }
 
-type TokenSymbol = uint8
+func (p DEXShare) Encode(encoder scale.Encoder) error {
+	var err1, err2 error
+
+	switch {
+	case p.IsToken:
+		err1 = encoder.PushByte(0)
+		err2 = encoder.Encode(p.AsToken)
+	case p.IsERC20:
+		err1 = encoder.PushByte(2)
+		err2 = encoder.Encode(p.AsERC20)
+	}
+
+	if err1 != nil {
+		return err1
+	}
+	if err2 != nil {
+		return err2
+	}
+
+	return nil
+}
 
 type CurrencyId struct {
 	IsToken 	bool
 	AsToken 	TokenSymbol
 	IsDEXShare	bool
 	AsDEXShare	struct {
-		Symbol_0	TokenSymbol
-		Symbol_1	TokenSymbol
+		Share_0	DEXShare
+		Share_1	DEXShare
 	}
 	IsERC20		bool
-	AsERC20		[20]byte
+	AsERC20		EvmAddress
+	IsChainSafeResource bool
+	AsChainSafeResource substrate_utils.RegistryId
 }
 
 func (p *CurrencyId) Decode(decoder scale.Decoder) error {
@@ -86,6 +93,9 @@ func (p *CurrencyId) Decode(decoder scale.Decoder) error {
 	case 2:
 		p.IsERC20 = true
 		err = decoder.Decode(&p.AsERC20)
+	case 3:
+		p.IsChainSafeResource = true
+		err = decoder.Decode(&p.AsChainSafeResource)
 	}
 
 	if err != nil {
@@ -108,6 +118,9 @@ func (p CurrencyId) Encode(encoder scale.Encoder) error {
 	case p.IsERC20:
 		err1 = encoder.PushByte(2)
 		err2 = encoder.Encode(p.AsERC20)
+	case p.IsChainSafeResource:
+		err1 = encoder.PushByte(2)
+		err2 = encoder.Encode(p.AsChainSafeResource)
 	}
 
 	if err1 != nil {
@@ -141,31 +154,10 @@ type EventCdpTreasuryCollateralAuctionMaximumSizeUpdated struct {
 	Topics          []types.Hash
 }
 
-type EventCdpTreasuryTest1 struct {
-	Phase           types.Phase
-	Symbol      	uint8
-	Topics          []types.Hash
-}
-
-type EventCdpTreasuryTest2 struct {
-	Phase           types.Phase
-	Who      		Nmsl
-	Topics          []types.Hash
-}
-
-type EventCdpTreasuryTest3 struct {
-	Phase           types.Phase
-	NewHello      	Hello
-	Topics          []types.Hash
-}
-
 type Events struct {
 	substrate_utils.Events
 	Currencies_Transferred								[]EventCurrenciesTransferred	//nolint:stylecheck,golint
 	AcalaTreasury_Deposit								[]types.EventTreasuryDeposit	//nolint:stylecheck,golint
 	CdpEngine_GlobalStabilityFeeUpdated					[]EventCdpEngineGlobalStabilityFeeUpdated	//nolint:stylecheck,golint
 	CdpTreasury_CollateralAuctionMaximumSizeUpdated		[]EventCdpTreasuryCollateralAuctionMaximumSizeUpdated	//nolint:stylecheck,golint
-	CdpTreasury_Test1 []EventCdpTreasuryTest1	//nolint:stylecheck,golint
-	CdpTreasury_Test2 []EventCdpTreasuryTest2	//nolint:stylecheck,golint
-	CdpTreasury_Test3 []EventCdpTreasuryTest3	//nolint:stylecheck,golint
 }
