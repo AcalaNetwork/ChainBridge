@@ -7,8 +7,8 @@ import (
 	"math/big"
 
 	"github.com/ChainSafe/chainbridge-utils/msg"
-	"github.com/centrifuge/go-substrate-rpc-client/scale"
-	"github.com/centrifuge/go-substrate-rpc-client/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v3/scale"
+	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 )
 
 type voteState struct {
@@ -63,6 +63,7 @@ func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {
 	amount := types.NewU128(*bigAmt)
 	recipient := types.NewAccountID(m.Payload[1].([]byte))
 	depositNonce := types.U64(m.DepositNonce)
+	resourceId := types.NewBytes32(m.ResourceId)
 
 	meta := w.conn.getMetadata()
 	method, err := w.resolveResourceId(m.ResourceId)
@@ -74,6 +75,7 @@ func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {
 		method,
 		recipient,
 		amount,
+		resourceId,
 	)
 	if err != nil {
 		return nil, err
@@ -90,7 +92,7 @@ func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {
 		depositNonce: depositNonce,
 		call:         call,
 		sourceId:     types.U8(m.Source),
-		resourceId:   types.NewBytes32(m.ResourceId),
+		resourceId:   resourceId,
 		method:       method,
 	}, nil
 }

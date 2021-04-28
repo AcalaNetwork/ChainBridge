@@ -15,7 +15,7 @@ import (
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
-	"github.com/centrifuge/go-substrate-rpc-client/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 )
 
 type listener struct {
@@ -190,20 +190,16 @@ func (l *listener) processEvents(hash types.Hash) error {
 	}
 
 	var records types.EventRecordsRaw
-	l.log.Trace("After Definition 1111111111111111", "records", records)
 	_, err = l.conn.api.RPC.State.GetStorage(key, &records, hash)
 	if err != nil {
 		return err
 	}
-	l.log.Trace("After GetStorage 2222222222222222", "records", records)
 
 	e := utils.Events{}
 	err = records.DecodeEventRecords(&meta, &e)
-	l.log.Trace("After Decode 333333333333333", "records", records)
 	if err != nil {
 		return err
 	}
-	l.log.Trace("After Decode 444444444444444", "events", e)
 
 	l.handleEvents(e)
 	l.log.Trace("Finished processing events", "block", hash.Hex())

@@ -159,7 +159,10 @@ func importPrivKey(ctx *cli.Context, keytype, datadir, key string, password []by
 	if keytype == crypto.Sr25519Type {
 		// generate sr25519 keys
 		network := ctx.String(config.SubkeyNetworkFlag.Name)
-		kp, err = sr25519.NewKeypairFromSeed(key, network)
+		_ = network
+
+		// TODO: get network in uint8 from config.SubkeyNetworkFlag.Name
+		kp, err = sr25519.NewKeypairFromSeed(key, 42)
 		if err != nil {
 			return "", fmt.Errorf("could not generate sr25519 keypair from given string: %w", err)
 		}
@@ -350,7 +353,9 @@ func generateKeypair(keytype, datadir string, password []byte, subNetwork string
 
 	if keytype == crypto.Sr25519Type {
 		// generate sr25519 keys
-		kp, err = sr25519.GenerateKeypair(subNetwork)
+
+		// TODO: get network in uint8 from subNetwork
+		kp, err = sr25519.GenerateKeypair(42)
 		if err != nil {
 			return "", fmt.Errorf("could not generate sr25519 keypair: %w", err)
 		}
