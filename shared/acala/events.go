@@ -608,6 +608,72 @@ type EventIncentivesClaimRewards struct {
 	Topics          []types.Hash
 }
 
+type EventLoansPositionUpdated struct {
+	Phase           types.Phase
+	Who				types.AccountID
+	CurrencyId		CurrencyId
+	CollateralAdjustment	types.I128
+	DebitAdjustment	types.I128
+	Topics          []types.Hash
+}
+
+type EventLoansConfiscateCollateralAndDebit struct {
+	Phase           types.Phase
+	Who				types.AccountID
+	CurrencyId		CurrencyId
+	CollateralAmount	types.I128
+	Debit			types.I128
+	Topics          []types.Hash
+}
+
+type EventLoansTransferLoan struct {
+	Phase           types.Phase
+	Sender			types.AccountID
+	Receiver		types.AccountID
+	CurrencyId		CurrencyId
+	Topics          []types.Hash
+}
+
+type EventNFTCreatedClass struct {
+	Phase           types.Phase
+	Who				types.AccountID
+	ClassId			types.U32
+	Topics          []types.Hash
+}
+
+type EventNFTMintedToken struct {
+	Phase           types.Phase
+	Minter			types.AccountID
+	Receiver		types.AccountID
+	ClassId			types.U32
+	Quantity		types.U32
+	Topics          []types.Hash
+}
+
+type EventNFTTransferredToken struct {
+	Phase           types.Phase
+	From			types.AccountID
+	To				types.AccountID
+	ClassId			types.U32
+	TokenId			types.U64
+	Topics          []types.Hash
+}
+
+type EventNFTBurnedToken struct {
+	Phase           types.Phase
+	Who				types.AccountID
+	ClassId			types.U32
+	TokenId			types.U64
+	Topics          []types.Hash
+}
+
+type EventNFTDestroyedClass struct {
+	Phase           types.Phase
+	Owner			types.AccountID
+	ClassId			types.U32
+	Topics          []types.Hash
+}
+
 
 type Events struct {
 	substrate_utils.Events
@@ -674,4 +740,15 @@ type Events struct {
 	Incentives_DepositDexShare				[]EventIncentivesDepositDexShare	//nolint:stylecheck,golint
 	Incentives_WithdrawDexShare				[]EventIncentivesWithdrawDexShare	//nolint:stylecheck,golint
 	Incentives_ClaimRewards					[]EventIncentivesClaimRewards		//nolint:stylecheck,golint
+
+	Loans_PositionUpdated					[]EventLoansPositionUpdated					//nolint:stylecheck,golint
+	Loans_ConfiscateCollateralAndDebit		[]EventLoansConfiscateCollateralAndDebit	//nolint:stylecheck,golint
+	Loans_TransferLoan						[]EventLoansTransferLoan					//nolint:stylecheck,golint
+
+	NFT_CreatedClass						[]EventNFTCreatedClass				//nolint:stylecheck,golint
+	NFT_MintedToken							[]EventNFTMintedToken				//nolint:stylecheck,golint
+	NFT_TransferredToken					[]EventNFTTransferredToken			//nolint:stylecheck,golint
+	NFT_BurnedToken							[]EventNFTBurnedToken				//nolint:stylecheck,golint
+	NFT_DestroyedClass						[]EventNFTDestroyedClass			//nolint:stylecheck,golint
 }
+
