@@ -10,7 +10,7 @@ require (
 	github.com/ethereum/go-ethereum v1.10.2
 	github.com/prometheus/client_golang v1.4.1
 	github.com/stretchr/testify v1.7.0
-	github.com/urfave/cli/v2 v2.3.0
+	github.com/urfave/cli/v2 v2.4.8
 )
 
 replace github.com/ChainSafe/chainbridge-substrate-events v0.0.0-20200715141113-87198532025e => github.com/wangjj9219/chainbridge-substrate-events v0.0.0-20210421142230-2efb6d1066fe
